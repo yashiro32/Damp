@@ -2,6 +2,8 @@ package en.menghui.android.damp;
 
 import javax.xml.xpath.XPath;
 
+import en.menghui.android.damp.utils.MatrixUtils;
+import en.menghui.android.damp.utils.NeuralNetUtils;
 import Jama.Matrix;
 
 public class BLSTM {

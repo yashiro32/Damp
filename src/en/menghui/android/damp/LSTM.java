@@ -1,5 +1,6 @@
 package en.menghui.android.damp;
 
+import en.menghui.android.damp.utils.NeuralNetUtils;
 import Jama.Matrix;
 
 public class LSTM {

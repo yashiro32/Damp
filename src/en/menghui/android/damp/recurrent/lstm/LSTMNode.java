@@ -1,6 +1,6 @@
 package en.menghui.android.damp.recurrent.lstm;
 
-import en.menghui.android.damp.NeuralNetUtils;
+import en.menghui.android.damp.utils.NeuralNetUtils;
 import Jama.Matrix;
 
 public class LSTMNode {

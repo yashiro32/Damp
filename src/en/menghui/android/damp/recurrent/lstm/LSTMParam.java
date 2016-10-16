@@ -1,8 +1,8 @@
 package en.menghui.android.damp.recurrent.lstm;
 
 import Jama.Matrix;
-import en.menghui.android.damp.MatrixUtils;
-import en.menghui.android.damp.NeuralNetUtils;
+import en.menghui.android.damp.utils.MatrixUtils;
+import en.menghui.android.damp.utils.NeuralNetUtils;
 
 public class LSTMParam {
 	public int xDim;

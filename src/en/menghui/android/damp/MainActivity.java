@@ -1,15 +1,25 @@
 package en.menghui.android.damp;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
+import en.menghui.android.damp.layers.ConvolutionLayer;
+import en.menghui.android.damp.layers.FullyConnectedLayer;
+import en.menghui.android.damp.layers.Layer;
+import en.menghui.android.damp.layers.PoolingLayer;
+import en.menghui.android.damp.layers.RecurrentLayer;
+import en.menghui.android.damp.layers.SoftmaxLayer;
+import en.menghui.android.damp.networks.FeedForwardNetwork;
 import en.menghui.android.damp.recurrent.lstm.LSTMNetwork;
 import en.menghui.android.damp.recurrent.lstm.LSTMNode;
 import en.menghui.android.damp.recurrent.lstm.LSTMParam;
 import en.menghui.android.damp.recurrent.lstm.LSTMState;
+import en.menghui.android.damp.utils.MatrixUtils;
+import en.menghui.android.damp.utils.NeuralNetUtils;
 import Jama.Matrix;
 import android.app.Activity;
 import android.os.Bundle;
@@ -31,32 +41,43 @@ public class MainActivity extends Activity {
 		Matrix X = new Matrix(x);
 		Matrix y = new Matrix(ys, 4);
 		
-		// Network net1 = new Network(X, y);
-		// net1.forwardProp();
-		
 		FullyConnectedLayer fc1 = new FullyConnectedLayer(3, 10, "sigmoid", 0.0);
 		// FullyConnectedLayer fc2 = new FullyConnectedLayer(10, 15, "sigmoid", 0.0);
 		SoftmaxLayer sf1 = new SoftmaxLayer(10, 2, 0.0);
 		
-		for (int i = 0; i < 0; i++) {
+		/* for (int i = 0; i < 1000; i++) {
 			fc1.setInput(X, X, 60);
 			// fc2.setInput(fc1.output, fc1.output, 60);
 			sf1.setInput(fc1.output, fc1.output, y, 60);
 			
 			sf1.backProp(null);
+			sf1.optimize();
 			// fc2.backProp(sf1.bpOutput);
+			// fc2.optimize();
 			fc1.backProp(sf1.bpOutput);
+			fc1.optimize();
 			
 			// NeuralNetUtils.printMatrix(fc1.output);
-		}
+		} */
 		
 		// NeuralNetUtils.printMatrix(sf1.output);
 		// NeuralNetUtils.printMatrix(sf1.yOut);
 		
+		FeedForwardNetwork network = new FeedForwardNetwork(X, y, 60);
+		List<Layer> layers = new ArrayList<Layer>();
+		layers.add(fc1);
+		layers.add(sf1);
+		network.layers = layers;
+		network.epochs = 1000;
+		network.fit();
+		
+		NeuralNetUtils.printMatrix(network.layers.get(network.layers.size()-1).output);
+		NeuralNetUtils.printMatrix(network.layers.get(network.layers.size()-1).yOut);
+		
 		// testConv();
 		// testPool();
 		// testRecurrent();
-		testLSTM(0.1);
+		// testLSTM(0.1);
 		// testBLSTM();
 	}
 	
