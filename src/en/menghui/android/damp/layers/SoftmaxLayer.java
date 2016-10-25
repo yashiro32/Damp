@@ -13,6 +13,7 @@ public class SoftmaxLayer extends Layer {
 		// double epsilonInit = 0.12; 
 		
 		this.W = Matrix.random(nIn, nOut);
+		this.W = NeuralNetUtils.initRandomMatrix(this.W);
 		this.b = new Matrix(1, nOut, 0.0);
 		
 		// this.params = NeuralNetUtils.combineMatrixHorizontal(this.W, this.b);
@@ -101,6 +102,14 @@ public class SoftmaxLayer extends Layer {
 	}
 	
 	public void gd() {
+		if (this.useLRDecay) {
+			if (decaySteps > 0) {
+				this.learningRate = decayLearningRatePerStep(this.learningRate, this.learningRateDecayFactor, this.globalStep, this.decaySteps, this.staircase);
+			} else {
+				this.learningRate = decayLearningRate(this.learningRate, this.learningRateDecayFactor);
+			}
+		}
+		
 		// Gradient descent parameter update
 		this.W.plusEquals(this.dW.times(-this.learningRate));
 		this.b.plusEquals(this.db.times(-this.learningRate));

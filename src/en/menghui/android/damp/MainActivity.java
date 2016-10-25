@@ -23,11 +23,14 @@ import en.menghui.android.damp.utils.NeuralNetUtils;
 import Jama.Matrix;
 import android.app.Activity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 
 public class MainActivity extends Activity {
 
+	private static final String TAG = "Main Activity";
+	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -42,6 +45,7 @@ public class MainActivity extends Activity {
 		Matrix y = new Matrix(ys, 4);
 		
 		FullyConnectedLayer fc1 = new FullyConnectedLayer(3, 10, "sigmoid", 0.0);
+		fc1.useBatchNormalization = true;
 		// FullyConnectedLayer fc2 = new FullyConnectedLayer(10, 15, "sigmoid", 0.0);
 		SoftmaxLayer sf1 = new SoftmaxLayer(10, 2, 0.0);
 		

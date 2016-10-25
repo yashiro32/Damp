@@ -34,5 +34,45 @@ public class MatrixUtils {
 		return matArr;
 	}
 	
+	public static Matrix minusVector(Matrix matA, Matrix matB) {
+		if (matB.getColumnDimension() != matA.getColumnDimension()) {
+			throw new IllegalArgumentException("Column dimension of both Matrices must be the same!");
+		}
+		
+		if (matB.getRowDimension() != 1) {
+			throw new IllegalArgumentException("Row dimension of Matrix b must be equal to one!");
+		}
+		
+		Matrix a = new Matrix(matA.getRowDimension(), matA.getColumnDimension());
+		
+		for (int i = 0; i < matA.getRowDimension(); i++) {
+			for (int j = 0; j < matA.getColumnDimension(); j++) {
+				a.set(i, j, matA.get(i, j) - matB.get(0, j));
+			}
+		}
+		
+		return a;
+	}
+	
+	public static Matrix timesVector(Matrix matA, Matrix matB) {
+		if (matB.getColumnDimension() != matA.getColumnDimension()) {
+			throw new IllegalArgumentException("Column dimension of both Matrices must be the same!");
+		}
+		
+		if (matB.getRowDimension() != 1) {
+			throw new IllegalArgumentException("Row dimension of Matrix b must be equal to one!");
+		}
+		
+		Matrix a = new Matrix(matA.getRowDimension(), matA.getColumnDimension());
+		
+		for (int i = 0; i < matA.getRowDimension(); i++) {
+			for (int j = 0; j < matA.getColumnDimension(); j++) {
+				a.set(i, j, matA.get(i, j) * matB.get(0, j));
+			}
+		}
+		
+		return a;
+	}
+	
 	
 }

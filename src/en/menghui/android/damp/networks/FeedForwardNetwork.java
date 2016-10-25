@@ -64,8 +64,18 @@ public class FeedForwardNetwork extends Network {
 		}
 	}
 	
-	public void predict() {
-		
+	public void predict(Matrix set) {
+		for (int i = 0; i < layers.size(); i++) {
+			if (layers.get(i).type.equals("fully connected")) {
+				if (i == 0) {
+					((FullyConnectedLayer)layers.get(i)).setInput(set, set, batchSize);
+				} else {
+					((FullyConnectedLayer)layers.get(i)).setInput(layers.get(i-1).output, layers.get(i-1).output, batchSize);
+				}
+			} else if (layers.get(i).type.equals("softmax")) {
+				((SoftmaxLayer)layers.get(i)).setInput(layers.get(i-1).output, layers.get(i-1).output, targets, batchSize);
+			}
+		}
 	}
 	
 	public void sgd() {
