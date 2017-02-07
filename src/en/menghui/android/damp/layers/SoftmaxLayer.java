@@ -4,6 +4,8 @@ import en.menghui.android.damp.utils.NeuralNetUtils;
 import Jama.Matrix;
 
 public class SoftmaxLayer extends Layer {
+	private Matrix targetOneHot;
+	
 	public SoftmaxLayer(int nIn, int nOut, double dropoutP) {
 		this.type = "softmax";
 		this.nIn = nIn;
@@ -19,9 +21,16 @@ public class SoftmaxLayer extends Layer {
 		// this.params = NeuralNetUtils.combineMatrixHorizontal(this.W, this.b);
 	}
 	
-	public void setInput(Matrix inpt, Matrix dropoutInpt, Matrix target, int miniBatchSize) {
+	public void forwardProp(Matrix inpt, Matrix dropoutInpt, Matrix target, int miniBatchSize) {
 		this.input = inpt;
 		this.target = target;
+		
+		this.targetOneHot = new Matrix(target.getRowDimension(), nOut, 0.0);
+		for (int i = 0; i < target.getRowDimension(); i++) {
+			for (int j = 0; j < nOut; j++) {
+				targetOneHot.set(i, j, j == target.get(i, 0) ? 1 : 0);
+			}
+		}
 		
 		try {
 			this.output = NeuralNetUtils.sigmoid(NeuralNetUtils.add(this.input.times(this.W).times(1.0-this.dropoutP), this.b), false);
@@ -67,20 +76,23 @@ public class SoftmaxLayer extends Layer {
 	public void backProp(Matrix bpInput) {
 		this.bpInput = bpInput;
 		
-		// Matrix delta = this.output.minus(this.target);
+		Matrix delta = this.output.minus(this.targetOneHot);
 		
-		Matrix delta = this.output.copy();
+		/* Matrix delta = this.output.copy();
 		for (int k = 0; k < delta.getRowDimension(); k++) {
 			delta.set(k, (int)target.get(k, 0), delta.get(k, (int)target.get(k, 0)) - 1.0);
-		}
+		} */
 		
-		Matrix deriv = NeuralNetUtils.sigmoid(this.input, true);
 		
-		this.bpOutput = delta.times(this.W.transpose()).arrayTimes(deriv);
+		Matrix deriv = NeuralNetUtils.sigmoid(this.output, true);
+		
+		// this.bpOutput = delta.times(this.W.transpose()).arrayTimes(deriv);
+		this.bpOutput = delta.arrayTimes(deriv).times(this.W.transpose());
 		
 		// Matrix dW = this.input.transpose().times(delta);
 		// Matrix db = NeuralNetUtils.sum(delta, 0);
-		this.dW = this.input.transpose().times(delta);
+		// this.dW = this.input.transpose().times(delta);
+		this.dW = this.input.transpose().times(delta.arrayTimes(deriv));
 		this.db = NeuralNetUtils.sum(delta, 0);
 		
 		// Add regularization terms (b1 and b2 don't have regularization terms)

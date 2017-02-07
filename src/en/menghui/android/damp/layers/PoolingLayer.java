@@ -52,7 +52,7 @@ public class PoolingLayer extends Layer {
 		this.switches = new double[numImages][numChannels][imageHeight/strideY][imageWidth/strideX][2];
 	}
 	
-	public void setInput(Matrix[][] inpt, int miniBatchSize) {
+	public void forwardProp(Matrix[][] inpt, int miniBatchSize) {
 		this.images= inpt;
 		
 		double imgYMax = 0.0;

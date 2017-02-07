@@ -275,5 +275,46 @@ public class NeuralNetUtils {
 		}
 	}
 	
+	public static void printMatrix(Matrix mat, boolean printCellValues) {
+		System.out.println("No of rows: " + mat.getRowDimension());
+		System.out.println("No of columns: " + mat.getColumnDimension());
+		
+		if(!printCellValues) {
+			return;
+		}
+		
+		for (int i = 0; i < mat.getRowDimension(); i++) {
+			for (int j = 0; j < mat.getColumnDimension(); j++) {
+				System.out.println("Cell: " + mat.get(i, j));
+			}
+		}
+	}
+	
+	public static Matrix featureNormalize(Matrix mat) {
+		int n = mat.getColumnDimension();
+		Matrix sum = sum(mat, 1);
+		Matrix nMat = new Matrix(mat.getRowDimension(), 1, 1.0/n);
+		Matrix mMat = sum.arrayTimes(nMat);
+		Matrix meanMat = new Matrix(mat.getRowDimension(), mat.getColumnDimension());
+		for (int i = 0; i < n; i++) {
+			meanMat.setMatrix(0, mat.getRowDimension()-1, i, i, mMat);
+		}
+		
+		Matrix xNormMat = mat.minus(meanMat);
+		
+		Matrix xNormSqrMat = xNormMat.arrayTimes(xNormMat);
+		sum = sum(xNormSqrMat, 1);
+		Matrix varianceMat = sum.arrayTimes(nMat);
+		Matrix stMat = MatrixUtils.sqrt(varianceMat);
+		Matrix stdMat = new Matrix(mat.getRowDimension(), mat.getColumnDimension());
+		for (int i = 0; i < n; i++) {
+			stdMat.setMatrix(0, mat.getRowDimension()-1, i, i, stMat);
+		}
+		
+		Matrix normMat = xNormMat.arrayRightDivide(stdMat);
+		
+		return normMat;
+	}  
+	
 	
 } 

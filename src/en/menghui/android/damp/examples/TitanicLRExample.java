@@ -30,24 +30,24 @@ public class TitanicLRExample extends Activity {
 		
 		// Build the neural network.
 		FullyConnectedLayer fc1 = new FullyConnectedLayer(6, 32, "sigmoid", 0.0);
-		fc1.learningRate = 0.001;
+		fc1.learningRate = 0.01;
 		// fc1.regLambda = 0.0;
-		fc1.useBatchNormalization = true;
+		// fc1.useBatchNormalization = true;
 		// fc1.learningRateDecayFactor = 0.1;
 		// fc1.useLRDecay = true;
 		// FullyConnectedLayer fc2 = new FullyConnectedLayer(32, 32, "sigmoid", 0.0);
-		// fc2.learningRate = 0.001;
+		// fc2.learningRate = 0.1;
 		// fc2.useBatchNormalization = true;
 		// FullyConnectedLayer fc3 = new FullyConnectedLayer(32, 64, "sigmoid", 0.0);
-		// fc3.learningRate = 0.001;
+		// fc3.learningRate = 0.01;
 		// fc3.useBatchNormalization = true;
 		SoftmaxLayer sf1 = new SoftmaxLayer(32, 2, 0.0);
-		sf1.learningRate = 0.001;
+		sf1.learningRate = 0.01;
 		// sf1.regLambda = 0.0;
 		// sf1.learningRateDecayFactor = 0.1;
 		// sf1.useLRDecay = true;
 		
-		FeedForwardNetwork network = new FeedForwardNetwork(dataSet.featuresMatrix, dataSet.labelsMatrix, 16);
+		FeedForwardNetwork network = new FeedForwardNetwork(NeuralNetUtils.featureNormalize(dataSet.featuresMatrix), dataSet.labelsMatrix, 16);
 		List<Layer> layers = new ArrayList<Layer>();
 		layers.add(fc1);
 		// layers.add(fc2);

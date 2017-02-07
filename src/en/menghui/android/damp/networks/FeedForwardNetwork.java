@@ -31,12 +31,12 @@ public class FeedForwardNetwork extends Network {
 		for (int i = 0; i < layers.size(); i++) {
 			if (layers.get(i).type.equals("fully connected")) {
 				if (i == 0) {
-					((FullyConnectedLayer)layers.get(i)).setInput(this.inputs, this.inputs, batchSize);
+					((FullyConnectedLayer)layers.get(i)).forwardProp(this.inputs, this.inputs, batchSize);
 				} else {
-					((FullyConnectedLayer)layers.get(i)).setInput(layers.get(i-1).output, layers.get(i-1).output, batchSize);
+					((FullyConnectedLayer)layers.get(i)).forwardProp(layers.get(i-1).output, layers.get(i-1).output, batchSize);
 				}
 			} else if (layers.get(i).type.equals("softmax")) {
-				((SoftmaxLayer)layers.get(i)).setInput(layers.get(i-1).output, layers.get(i-1).output, targets, batchSize);
+				((SoftmaxLayer)layers.get(i)).forwardProp(layers.get(i-1).output, layers.get(i-1).output, targets, batchSize);
 			}
 		}
 	}
@@ -68,12 +68,12 @@ public class FeedForwardNetwork extends Network {
 		for (int i = 0; i < layers.size(); i++) {
 			if (layers.get(i).type.equals("fully connected")) {
 				if (i == 0) {
-					((FullyConnectedLayer)layers.get(i)).setInput(set, set, batchSize);
+					((FullyConnectedLayer)layers.get(i)).forwardProp(set, set, batchSize);
 				} else {
-					((FullyConnectedLayer)layers.get(i)).setInput(layers.get(i-1).output, layers.get(i-1).output, batchSize);
+					((FullyConnectedLayer)layers.get(i)).forwardProp(layers.get(i-1).output, layers.get(i-1).output, batchSize);
 				}
 			} else if (layers.get(i).type.equals("softmax")) {
-				((SoftmaxLayer)layers.get(i)).setInput(layers.get(i-1).output, layers.get(i-1).output, targets, batchSize);
+				((SoftmaxLayer)layers.get(i)).forwardProp(layers.get(i-1).output, layers.get(i-1).output, targets, batchSize);
 			}
 		}
 	}

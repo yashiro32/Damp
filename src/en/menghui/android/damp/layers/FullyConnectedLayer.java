@@ -31,7 +31,7 @@ public class FullyConnectedLayer extends Layer {
 		// this.params = NeuralNetUtils.combineMatrixHorizontal(this.W, this.b);
 	}
 	
-	public void setInput(Matrix inpt, Matrix dropoutInpt, int miniBatchSize) {
+	public void forwardProp(Matrix inpt, Matrix dropoutInpt, int miniBatchSize) {
 		this.input = inpt;
 		
 		Matrix h = NeuralNetUtils.add(this.input.times(this.W).times(1.0-this.dropoutP), this.b);
@@ -89,13 +89,15 @@ public class FullyConnectedLayer extends Layer {
 		}
 		
 		
-		Matrix deriv = NeuralNetUtils.sigmoid(this.input, true);
+		Matrix deriv = NeuralNetUtils.sigmoid(this.output, true);
 		
-		this.bpOutput = bpIn.times(this.W.transpose()).arrayTimes(deriv);
+		// this.bpOutput = bpIn.times(this.W.transpose()).arrayTimes(deriv);
+		this.bpOutput = bpIn.arrayTimes(deriv).times(this.W.transpose());
 		
 		// Matrix dW = this.input.transpose().times(bpInput);
 		// Matrix db = NeuralNetUtils.sum(bpInput, 0);
-		this.dW = this.input.transpose().times(bpIn);
+		// this.dW = this.input.transpose().times(bpIn);
+		this.dW = this.input.transpose().times(bpIn.arrayTimes(deriv));
 		this.db = NeuralNetUtils.sum(bpIn, 0);
 		
 		// Add regularization terms (b1 and b2 don't have regularization terms)

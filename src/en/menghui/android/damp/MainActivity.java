@@ -191,7 +191,7 @@ public class MainActivity extends Activity {
 		
 		ConvolutionLayer cl1 = new ConvolutionLayer(1, 1, 1, 1, 8, 8, 7, 7);
 		cl1.filters = filters;
-		cl1.setInput(imgs, 60);
+		cl1.forwarProp(imgs, 60);
 		
 		for (int i = 0; i < cl1.convOutputs.length; i++) {
 			for (int j = 0; j < cl1.convOutputs[0].length; j++) {
@@ -225,7 +225,7 @@ public class MainActivity extends Activity {
 			}
 		}
 		
-		pl1.setInput(imgs, 60);
+		pl1.forwardProp(imgs, 60);
 		
 		for (int i = 0; i < pl1.poolout.length; i++) {
 			for (int j = 0; j < pl1.poolout[0].length; j++) {

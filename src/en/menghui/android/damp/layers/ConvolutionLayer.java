@@ -66,7 +66,7 @@ public class ConvolutionLayer {
 		}
 	}
 	
-	public void setInput(Matrix[][] inpt, int miniBatchSize) {
+	public void forwarProp(Matrix[][] inpt, int miniBatchSize) {
 		this.images = inpt;
 		
 		for (int i = 0; i < numImages; i++) {
