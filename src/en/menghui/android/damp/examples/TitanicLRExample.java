@@ -8,6 +8,13 @@ import en.menghui.android.damp.layers.FullyConnectedLayer;
 import en.menghui.android.damp.layers.Layer;
 import en.menghui.android.damp.layers.SoftmaxLayer;
 import en.menghui.android.damp.networks.FeedForwardNetwork;
+import en.menghui.android.damp.optimizations.AdaDeltaOptimizer;
+import en.menghui.android.damp.optimizations.AdaGradOptimizer;
+import en.menghui.android.damp.optimizations.AdamOptimizer;
+import en.menghui.android.damp.optimizations.GDOptimizer;
+import en.menghui.android.damp.optimizations.NetsterovOptimizer;
+import en.menghui.android.damp.optimizations.SGDOptimizer;
+import en.menghui.android.damp.optimizations.WindowGradOptimizer;
 import en.menghui.android.damp.utils.NeuralNetUtils;
 import Jama.Matrix;
 import android.app.Activity;
@@ -22,6 +29,13 @@ public class TitanicLRExample extends Activity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
 		
+		
+		/* // double[][] teDa = new double[][] { {1.0,2.0,3.0}, {4.0,5.0,6.0} };
+		double[][] teDa = new double[][] { {1., -1.,  2.}, { 2.,  0.,  0.}, { 0.,  1., -1.} };
+		Matrix teMat = new Matrix(teDa);
+		NeuralNetUtils.printMatrix(NeuralNetUtils.featureNormalize(teMat)); */
+		
+		
 		TitanicDataSet dataSet = new TitanicDataSet(this);
 		int[] columnsToIgnore = {2, 7};
 		dataSet.loadDataSet(0, columnsToIgnore);
@@ -30,11 +44,13 @@ public class TitanicLRExample extends Activity {
 		
 		// Build the neural network.
 		FullyConnectedLayer fc1 = new FullyConnectedLayer(6, 32, "sigmoid", 0.0);
-		fc1.learningRate = 0.01;
+		// fc1.learningRate = 0.01;
 		// fc1.regLambda = 0.0;
-		// fc1.useBatchNormalization = true;
+		fc1.useBatchNormalization = true;
 		// fc1.learningRateDecayFactor = 0.1;
 		// fc1.useLRDecay = true;
+		// fc1.optimizationFunction = "adagrad";
+		fc1.optimizer = new WindowGradOptimizer(0.95, 1e-6, 0.01);
 		// FullyConnectedLayer fc2 = new FullyConnectedLayer(32, 32, "sigmoid", 0.0);
 		// fc2.learningRate = 0.1;
 		// fc2.useBatchNormalization = true;
@@ -42,12 +58,14 @@ public class TitanicLRExample extends Activity {
 		// fc3.learningRate = 0.01;
 		// fc3.useBatchNormalization = true;
 		SoftmaxLayer sf1 = new SoftmaxLayer(32, 2, 0.0);
-		sf1.learningRate = 0.01;
+		// sf1.learningRate = 0.01;
 		// sf1.regLambda = 0.0;
 		// sf1.learningRateDecayFactor = 0.1;
 		// sf1.useLRDecay = true;
+		// sf1.optimizationFunction = "adagrad";
+		sf1.optimizer = new WindowGradOptimizer(0.95, 1e-6, 0.01);
 		
-		FeedForwardNetwork network = new FeedForwardNetwork(NeuralNetUtils.featureNormalize(dataSet.featuresMatrix), dataSet.labelsMatrix, 16);
+		FeedForwardNetwork network = new FeedForwardNetwork(dataSet.featuresMatrix, dataSet.labelsMatrix, 16);
 		List<Layer> layers = new ArrayList<Layer>();
 		layers.add(fc1);
 		// layers.add(fc2);

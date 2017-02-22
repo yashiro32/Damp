@@ -1,5 +1,14 @@
 package en.menghui.android.damp.layers;
 
+import java.util.List;
+
+import en.menghui.android.damp.optimizations.AdaDeltaOptimizer;
+import en.menghui.android.damp.optimizations.AdaGradOptimizer;
+import en.menghui.android.damp.optimizations.AdamOptimizer;
+import en.menghui.android.damp.optimizations.GDOptimizer;
+import en.menghui.android.damp.optimizations.NetsterovOptimizer;
+import en.menghui.android.damp.optimizations.SGDOptimizer;
+import en.menghui.android.damp.optimizations.WindowGradOptimizer;
 import en.menghui.android.damp.utils.MatrixUtils;
 import en.menghui.android.damp.utils.NeuralNetUtils;
 import Jama.Matrix;
@@ -27,6 +36,14 @@ public class FullyConnectedLayer extends Layer {
 		this.W = Matrix.random(nIn, nOut);
 		this.W = NeuralNetUtils.initRandomMatrix(this.W);
 		this.b = new Matrix(1, nOut, 0.0);
+		
+		// Memory variables for AdaGrad, Adam, AdaDelta optimizer.
+		this.mW = new Matrix(nIn, nOut, 0.0);
+		this.mb = new Matrix(1, nOut, 0.0);
+		
+		// Memory variables for Adam, AdaDelta optimizer.
+		this.vW = new Matrix(nIn, nOut, 0.0);
+		this.vb = new Matrix(1, nOut, 0.0);
 		
 		// this.params = NeuralNetUtils.combineMatrixHorizontal(this.W, this.b);
 	}
@@ -113,8 +130,95 @@ public class FullyConnectedLayer extends Layer {
 	}
 	
 	public void optimize() {
-		if (this.optimizationFunction.equals("gd")) {
+		/* if (this.optimizationFunction.equals("gd")) {
 			gd();
+		} else if (this.optimizationFunction.equals("adagrad")) {
+			adaGrad();
+		} else if (this.optimizationFunction.equals("adam")) {
+			adam();
+		} */
+		
+		if (this.optimizer instanceof AdamOptimizer) {
+			AdamOptimizer optzer = (AdamOptimizer) this.optimizer;
+			List<Matrix> pags = optzer.optimize(this.mW, this.vW, this.dW, this.W, this.epochCount);
+			this.mW = pags.get(0);
+			this.vW = pags.get(1);
+			this.dW = pags.get(2);
+			this.W  = pags.get(3);
+			
+			pags = optzer.optimize(this.mb, this.vb, this.db, this.b, this.epochCount);
+			this.mb = pags.get(0);
+			this.vb = pags.get(1);
+			this.db = pags.get(2);
+			this.b  = pags.get(3);
+			
+			this.epochCount++;
+		} else if (this.optimizer instanceof AdaGradOptimizer) {
+			AdaGradOptimizer optzer = (AdaGradOptimizer) this.optimizer;
+			List<Matrix> pags = optzer.optimize(this.mW, this.dW, this.W);
+			this.mW = pags.get(0);
+			this.dW = pags.get(1);
+			this.W  = pags.get(2);
+			
+			pags = optzer.optimize(this.mb, this.db, this.b);
+			this.mb = pags.get(0);
+			this.db = pags.get(1);
+			this.b  = pags.get(2);
+		} else if (this.optimizer instanceof AdaDeltaOptimizer) {
+			AdaDeltaOptimizer optzer = (AdaDeltaOptimizer) this.optimizer;
+			List<Matrix> pags = optzer.optimize(this.mW, this.vW, this.dW, this.W);
+			this.mW = pags.get(0);
+			this.vW = pags.get(1);
+			this.dW = pags.get(2);
+			this.W  = pags.get(3);
+			
+			pags = optzer.optimize(this.mb, this.vb, this.db, this.b);
+			this.mb = pags.get(0);
+			this.vb = pags.get(1);
+			this.db = pags.get(2);
+			this.b  = pags.get(3);
+		}  else if (this.optimizer instanceof GDOptimizer) {
+			GDOptimizer optzer = (GDOptimizer) this.optimizer;
+			List<Matrix> pags = optzer.optimize(this.dW, this.W);
+			this.dW = pags.get(0);
+			this.W  = pags.get(1);
+			
+			pags = optzer.optimize(this.db, this.b);
+			this.db = pags.get(0);
+			this.b  = pags.get(1);
+		} else if (this.optimizer instanceof SGDOptimizer) {
+			SGDOptimizer optzer = (SGDOptimizer) this.optimizer;
+			List<Matrix> pags = optzer.optimize(this.mW, this.dW, this.W);
+			this.mW = pags.get(0);
+			this.dW = pags.get(1);
+			this.W  = pags.get(2);
+			
+			pags = optzer.optimize(this.mb, this.db, this.b);
+			this.mb = pags.get(0);
+			this.db = pags.get(1);
+			this.b  = pags.get(2);
+		} else if (this.optimizer instanceof NetsterovOptimizer) {
+			NetsterovOptimizer optzer = (NetsterovOptimizer) this.optimizer;
+			List<Matrix> pags = optzer.optimize(this.mW, this.dW, this.W);
+			this.mW = pags.get(0);
+			this.dW = pags.get(1);
+			this.W  = pags.get(2);
+			
+			pags = optzer.optimize(this.mb, this.db, this.b);
+			this.mb = pags.get(0);
+			this.db = pags.get(1);
+			this.b  = pags.get(2);
+		} else if (this.optimizer instanceof WindowGradOptimizer) {
+			WindowGradOptimizer optzer = (WindowGradOptimizer) this.optimizer;
+			List<Matrix> pags = optzer.optimize(this.mW, this.dW, this.W);
+			this.mW = pags.get(0);
+			this.dW = pags.get(1);
+			this.W  = pags.get(2);
+			
+			pags = optzer.optimize(this.mb, this.db, this.b);
+			this.mb = pags.get(0);
+			this.db = pags.get(1);
+			this.b  = pags.get(2);
 		}
 	}
 	
@@ -130,6 +234,57 @@ public class FullyConnectedLayer extends Layer {
 		// Gradient descent parameter update
 		this.W.plusEquals(this.dW.times(-this.learningRate));
 		this.b.plusEquals(this.db.times(-this.learningRate));
+	}
+	
+	public void adaGrad() {
+		this.adjustLearningRate();
+		
+		this.mW.plusEquals(this.dW.arrayTimes(this.dW));
+		this.mb.plusEquals(this.db.arrayTimes(this.db));
+		
+		// Adagrad update.
+		Matrix epsilonMat = new Matrix(this.W.getRowDimension(), this.W.getColumnDimension(), 1e-8);
+		this.W.plusEquals(this.dW.arrayRightDivide(MatrixUtils.sqrt(this.mW.plus(epsilonMat))).times(this.learningRate).uminus());
+		// Wxh.plusEquals(MatrixUtils.sqrt(mWxh.plus(epsilonMat)).arrayLeftDivide(dWxh).times(-learningRate));
+		
+		epsilonMat = new Matrix(this.b.getRowDimension(), this.b.getColumnDimension(), 1e-8);
+		this.b.plusEquals(this.db.arrayRightDivide(MatrixUtils.sqrt(this.mb.plus(epsilonMat))).times(this.learningRate).uminus());
+		
+		// Reset diffs to zero.
+		this.dW = new Matrix(this.W.getRowDimension(), this.W.getColumnDimension(), 0.0);
+		this.db = new Matrix(this.b.getRowDimension(), this.b.getColumnDimension(), 0.0);
+	}
+	
+	public void adam() {
+		double alpha = 0.01;
+		this.learningRate = alpha * Math.sqrt(1.0 - Math.pow(this.beta2, this.epochCount)) / (1.0 - Math.pow(beta1, this.epochCount));
+		
+		// this.adjustLearningRate();
+		
+	    this.mW = this.mW.times(this.beta1).plus(this.dW.times(1.0 - this.beta1)); // Update biased first moment estimate.
+	    this.mb = this.mb.times(this.beta1).plus(this.db.times(1.0 - this.beta1)); // Update biased first moment estimate.
+	    
+		this.vW = this.vW.times(this.beta2).plus(this.dW.arrayTimes(this.dW).times(1.0 - this.beta2)); // Update biased second moment estimate.
+		this.vb = this.vb.times(this.beta2).plus(this.db.arrayTimes(this.db).times(1.0 - this.beta2)); // Update biased second moment estimate.
+		
+		Matrix biasCorrW1 = this.mW.times(1.0 - Math.pow(this.beta1, this.epochCount)); // Correct bias first moment estimate.
+		Matrix biasCorrb1 = this.mb.times(1.0 - Math.pow(this.beta1, this.epochCount)); // Correct bias first moment estimate.
+		Matrix biasCorrW2 = this.vW.times(1.0 - Math.pow(this.beta2, this.epochCount)); // Correct bias second moment estimate.
+		Matrix biasCorrb2 = this.vb.times(1.0 - Math.pow(this.beta2, this.epochCount)); // Correct bias second moment estimate.
+		
+		Matrix epsilonMat = new Matrix(this.W.getRowDimension(), this.W.getColumnDimension(), 1e-8);
+		// this.W.plusEquals(this.mW.arrayRightDivide(MatrixUtils.sqrt(this.vW).plus(epsilonMat)).times(-this.learningRate));
+		this.W.plusEquals(biasCorrW1.arrayRightDivide(MatrixUtils.sqrt(biasCorrW2).plus(epsilonMat)).times(-this.learningRate));
+		
+		epsilonMat = new Matrix(this.b.getRowDimension(), this.b.getColumnDimension(), 1e-8);
+		// this.b.plusEquals(this.mb.arrayRightDivide(MatrixUtils.sqrt(this.vb).plus(epsilonMat)).times(-this.learningRate));
+		this.b.plusEquals(biasCorrb1.arrayRightDivide(MatrixUtils.sqrt(biasCorrb2).plus(epsilonMat)).times(-this.learningRate));
+		
+		// Reset diffs to zero.
+		this.dW = new Matrix(this.W.getRowDimension(), this.W.getColumnDimension(), 0.0);
+		this.db = new Matrix(this.b.getRowDimension(), this.b.getColumnDimension(), 0.0);
+		
+		this.epochCount++;
 	}
 	
 	public Matrix batchNormalizationForward(Matrix h) {

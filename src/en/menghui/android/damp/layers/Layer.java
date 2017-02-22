@@ -1,5 +1,6 @@
 package en.menghui.android.damp.layers;
 
+import en.menghui.android.damp.optimizations.Optimizer;
 import Jama.Matrix;
 
 public class Layer {
@@ -11,6 +12,19 @@ public class Layer {
 	
 	public Matrix dW;
 	public Matrix db;
+	
+	// Memory variables for Ada, Adam, Ada Delta optimizer.
+	public Matrix mW;
+	public Matrix mb;
+	
+	// Memory variables for Adam, Ada Delta optimizer.
+	public Matrix vW;
+	public Matrix vb;
+	
+	// Hyper parameters for Adam optimizer.
+	public double beta1 = 0.9;
+	public double beta2 = 0.999;
+	protected int epochCount = 0;
 	
 	public int nIn;
 	public int nOut;
@@ -32,6 +46,7 @@ public class Layer {
 	
 	public String activationFunction;
 	public String optimizationFunction = "gd";
+	public Optimizer optimizer = new Optimizer();
 	
 	public double regLambda = 0.01;
 	public double learningRate = 0.01;
@@ -70,5 +85,15 @@ public class Layer {
 	
 	public double decayLearningRate(double lr, double decayFactor) {
 		return lr * decayFactor;
+	}
+	
+	public void adjustLearningRate() {
+		if (this.useLRDecay) {
+			if (decaySteps > 0) {
+				this.learningRate = decayLearningRatePerStep(this.learningRate, this.learningRateDecayFactor, this.globalStep, this.decaySteps, this.staircase);
+			} else {
+				this.learningRate = decayLearningRate(this.learningRate, this.learningRateDecayFactor);
+			}
+		}
 	}
 }

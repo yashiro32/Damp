@@ -245,6 +245,17 @@ public class NeuralNetUtils {
 				
 				out.set(i, 0, sum);
 			}
+		} else if (axis < 0) {
+			out = new Matrix(1, 1);
+			double sum = 0.0;
+			
+			for (int i = 0; i < inp.getRowDimension(); i++) {
+				for (int j = 0; j < inp.getColumnDimension(); j++) {
+					sum += inp.get(i, j);
+				}
+			}
+			
+			out.set(0, 0, sum);
 		}
 		
 		return out;
@@ -291,24 +302,31 @@ public class NeuralNetUtils {
 	}
 	
 	public static Matrix featureNormalize(Matrix mat) {
-		int n = mat.getColumnDimension();
-		Matrix sum = sum(mat, 1);
-		Matrix nMat = new Matrix(mat.getRowDimension(), 1, 1.0/n);
+		int n = mat.getRowDimension();
+		Matrix sum = sum(mat, 0);
+		// Matrix sum = sum(mat, -1);
+		Matrix nMat = new Matrix(1, mat.getColumnDimension(), 1.0/n);
+		// Matrix meanMat = new Matrix(mat.getRowDimension(), mat.getColumnDimension(), sum.get(0,0) / (mat.getRowDimension() * mat.getColumnDimension()));
 		Matrix mMat = sum.arrayTimes(nMat);
 		Matrix meanMat = new Matrix(mat.getRowDimension(), mat.getColumnDimension());
 		for (int i = 0; i < n; i++) {
-			meanMat.setMatrix(0, mat.getRowDimension()-1, i, i, mMat);
+			// meanMat.setMatrix(0, mat.getRowDimension()-1, i, i, mMat);
+			meanMat.setMatrix(i, i, 0, mat.getColumnDimension()-1, mMat);
 		}
 		
 		Matrix xNormMat = mat.minus(meanMat);
 		
 		Matrix xNormSqrMat = xNormMat.arrayTimes(xNormMat);
-		sum = sum(xNormSqrMat, 1);
+		sum = sum(xNormSqrMat, 0);
+		// sum = sum(xNormSqrMat, -1);
 		Matrix varianceMat = sum.arrayTimes(nMat);
+		// Matrix varianceMat = new Matrix(mat.getRowDimension(), mat.getColumnDimension(), sum.get(0,0) / (mat.getRowDimension() * mat.getColumnDimension()));;
+		// Matrix stdMat = MatrixUtils.sqrt(varianceMat);
 		Matrix stMat = MatrixUtils.sqrt(varianceMat);
 		Matrix stdMat = new Matrix(mat.getRowDimension(), mat.getColumnDimension());
 		for (int i = 0; i < n; i++) {
-			stdMat.setMatrix(0, mat.getRowDimension()-1, i, i, stMat);
+			// stdMat.setMatrix(0, mat.getRowDimension()-1, i, i, stMat);
+			stdMat.setMatrix(i, i, 0, mat.getColumnDimension()-1, stMat);
 		}
 		
 		Matrix normMat = xNormMat.arrayRightDivide(stdMat);

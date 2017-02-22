@@ -1,5 +1,15 @@
 package en.menghui.android.damp.layers;
 
+import java.util.List;
+
+import en.menghui.android.damp.optimizations.AdaDeltaOptimizer;
+import en.menghui.android.damp.optimizations.AdaGradOptimizer;
+import en.menghui.android.damp.optimizations.AdamOptimizer;
+import en.menghui.android.damp.optimizations.GDOptimizer;
+import en.menghui.android.damp.optimizations.NetsterovOptimizer;
+import en.menghui.android.damp.optimizations.SGDOptimizer;
+import en.menghui.android.damp.optimizations.WindowGradOptimizer;
+import en.menghui.android.damp.utils.MatrixUtils;
 import en.menghui.android.damp.utils.NeuralNetUtils;
 import Jama.Matrix;
 
@@ -17,6 +27,14 @@ public class SoftmaxLayer extends Layer {
 		this.W = Matrix.random(nIn, nOut);
 		this.W = NeuralNetUtils.initRandomMatrix(this.W);
 		this.b = new Matrix(1, nOut, 0.0);
+		
+		// Memory variables for AdaGrad.
+		this.mW = new Matrix(nIn, nOut, 0.0);
+		this.mb = new Matrix(1, nOut, 0.0);
+		
+		// Memory variables for Adam, AdaDelta optimizer.
+		this.vW = new Matrix(nIn, nOut, 0.0);
+		this.vb = new Matrix(1, nOut, 0.0);
 		
 		// this.params = NeuralNetUtils.combineMatrixHorizontal(this.W, this.b);
 	}
@@ -108,22 +126,89 @@ public class SoftmaxLayer extends Layer {
 	}
 	
 	public void optimize() {
-		if (this.optimizationFunction.equals("gd")) {
-			gd();
+		if (this.optimizer instanceof AdamOptimizer) {
+			AdamOptimizer optzer = (AdamOptimizer) this.optimizer;
+			List<Matrix> pags = optzer.optimize(this.mW, this.vW, this.dW, this.W, this.epochCount);
+			this.mW = pags.get(0);
+			this.vW = pags.get(1);
+			this.dW = pags.get(2);
+			this.W  = pags.get(3);
+			
+			pags = optzer.optimize(this.mb, this.vb, this.db, this.b, this.epochCount);
+			this.mb = pags.get(0);
+			this.vb = pags.get(1);
+			this.db = pags.get(2);
+			this.b  = pags.get(3);
+			
+			this.epochCount++;
+		} else if (this.optimizer instanceof AdaGradOptimizer) {
+			AdaGradOptimizer optzer = (AdaGradOptimizer) this.optimizer;
+			List<Matrix> pags = optzer.optimize(this.mW, this.dW, this.W);
+			this.mW = pags.get(0);
+			this.dW = pags.get(1);
+			this.W  = pags.get(2);
+			
+			pags = optzer.optimize(this.mb, this.db, this.b);
+			this.mb = pags.get(0);
+			this.db = pags.get(1);
+			this.b  = pags.get(2);
+		} else if (this.optimizer instanceof AdaDeltaOptimizer) {
+			AdaDeltaOptimizer optzer = (AdaDeltaOptimizer) this.optimizer;
+			List<Matrix> pags = optzer.optimize(this.mW, this.vW, this.dW, this.W);
+			this.mW = pags.get(0);
+			this.vW = pags.get(1);
+			this.dW = pags.get(2);
+			this.W  = pags.get(3);
+			
+			pags = optzer.optimize(this.mb, this.vb, this.db, this.b);
+			this.mb = pags.get(0);
+			this.vb = pags.get(1);
+			this.db = pags.get(2);
+			this.b  = pags.get(3);
+		} else if (this.optimizer instanceof GDOptimizer) {
+			GDOptimizer optzer = (GDOptimizer) this.optimizer;
+			List<Matrix> pags = optzer.optimize(this.dW, this.W);
+			this.dW = pags.get(0);
+			this.W  = pags.get(1);
+			
+			pags = optzer.optimize(this.db, this.b);
+			this.db = pags.get(0);
+			this.b  = pags.get(1);
+		} else if (this.optimizer instanceof SGDOptimizer) {
+			SGDOptimizer optzer = (SGDOptimizer) this.optimizer;
+			List<Matrix> pags = optzer.optimize(this.mW, this.dW, this.W);
+			this.mW = pags.get(0);
+			this.dW = pags.get(1);
+			this.W  = pags.get(2);
+			
+			pags = optzer.optimize(this.mb, this.db, this.b);
+			this.mb = pags.get(0);
+			this.db = pags.get(1);
+			this.b  = pags.get(2);
+		} else if (this.optimizer instanceof NetsterovOptimizer) {
+			NetsterovOptimizer optzer = (NetsterovOptimizer) this.optimizer;
+			List<Matrix> pags = optzer.optimize(this.mW, this.dW, this.W);
+			this.mW = pags.get(0);
+			this.dW = pags.get(1);
+			this.W  = pags.get(2);
+			
+			pags = optzer.optimize(this.mb, this.db, this.b);
+			this.mb = pags.get(0);
+			this.db = pags.get(1);
+			this.b  = pags.get(2);
+		} else if (this.optimizer instanceof WindowGradOptimizer) {
+			WindowGradOptimizer optzer = (WindowGradOptimizer) this.optimizer;
+			List<Matrix> pags = optzer.optimize(this.mW, this.dW, this.W);
+			this.mW = pags.get(0);
+			this.dW = pags.get(1);
+			this.W  = pags.get(2);
+			
+			pags = optzer.optimize(this.mb, this.db, this.b);
+			this.mb = pags.get(0);
+			this.db = pags.get(1);
+			this.b  = pags.get(2);
 		}
 	}
 	
-	public void gd() {
-		if (this.useLRDecay) {
-			if (decaySteps > 0) {
-				this.learningRate = decayLearningRatePerStep(this.learningRate, this.learningRateDecayFactor, this.globalStep, this.decaySteps, this.staircase);
-			} else {
-				this.learningRate = decayLearningRate(this.learningRate, this.learningRateDecayFactor);
-			}
-		}
-		
-		// Gradient descent parameter update
-		this.W.plusEquals(this.dW.times(-this.learningRate));
-		this.b.plusEquals(this.db.times(-this.learningRate));
-	}
+	
 }
