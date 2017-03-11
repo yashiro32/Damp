@@ -74,5 +74,17 @@ public class MatrixUtils {
 		return a;
 	}
 	
+	public static Matrix log(Matrix matA) {
+		Matrix mat = new Matrix(matA.getRowDimension(), matA.getColumnDimension());
+		
+		for (int i = 0; i < matA.getRowDimension(); i++) {
+			for (int j = 0; j < matA.getColumnDimension(); j++) {
+				mat.set(i, j, Math.log(matA.get(i, j)));
+			}
+		}
+		
+		return mat;
+	}
+	
 	
 }

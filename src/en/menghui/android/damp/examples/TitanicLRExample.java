@@ -4,6 +4,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import en.menghui.android.damp.R;
+import en.menghui.android.damp.activations.ReluActivation;
+import en.menghui.android.damp.activations.SigmoidActivation;
+import en.menghui.android.damp.activations.TanhActivation;
 import en.menghui.android.damp.layers.FullyConnectedLayer;
 import en.menghui.android.damp.layers.Layer;
 import en.menghui.android.damp.layers.SoftmaxLayer;
@@ -50,7 +53,10 @@ public class TitanicLRExample extends Activity {
 		// fc1.learningRateDecayFactor = 0.1;
 		// fc1.useLRDecay = true;
 		// fc1.optimizationFunction = "adagrad";
-		fc1.optimizer = new WindowGradOptimizer(0.95, 1e-6, 0.01);
+		fc1.activation = new SigmoidActivation();
+		fc1.optimizer = new SGDOptimizer(0.9, 0.01);
+		// fc1.useDropout = true;
+		// fc1.dropoutP = 0.6;
 		// FullyConnectedLayer fc2 = new FullyConnectedLayer(32, 32, "sigmoid", 0.0);
 		// fc2.learningRate = 0.1;
 		// fc2.useBatchNormalization = true;
@@ -63,9 +69,10 @@ public class TitanicLRExample extends Activity {
 		// sf1.learningRateDecayFactor = 0.1;
 		// sf1.useLRDecay = true;
 		// sf1.optimizationFunction = "adagrad";
-		sf1.optimizer = new WindowGradOptimizer(0.95, 1e-6, 0.01);
+		sf1.activation = new SigmoidActivation();
+		sf1.optimizer = new SGDOptimizer(0.9, 0.01);
 		
-		FeedForwardNetwork network = new FeedForwardNetwork(dataSet.featuresMatrix, dataSet.labelsMatrix, 16);
+		FeedForwardNetwork network = new FeedForwardNetwork(NeuralNetUtils.featureNormalize(dataSet.featuresMatrix, 0), dataSet.labelsMatrix, 16);
 		List<Layer> layers = new ArrayList<Layer>();
 		layers.add(fc1);
 		// layers.add(fc2);
@@ -75,8 +82,8 @@ public class TitanicLRExample extends Activity {
 		network.epochs = 100;
 		network.fit();
 		
-		NeuralNetUtils.printMatrix(network.layers.get(network.layers.size()-1).output);
-		NeuralNetUtils.printMatrix(network.layers.get(network.layers.size()-1).yOut);
+		// NeuralNetUtils.printMatrix(network.layers.get(network.layers.size()-1).output);
+		// NeuralNetUtils.printMatrix(network.layers.get(network.layers.size()-1).yOut);
 		
 		List<String[]> testList = new ArrayList<String[]>();
 		String[] dicaprio = {"0", "3", "JackDawson", "male", "19", "0", "0", "N/A", "5.0000"};

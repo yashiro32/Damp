@@ -1,7 +1,9 @@
 package en.menghui.android.damp.layers;
 
 import java.util.List;
+import java.util.Random;
 
+import android.util.Log;
 import en.menghui.android.damp.optimizations.AdaDeltaOptimizer;
 import en.menghui.android.damp.optimizations.AdaGradOptimizer;
 import en.menghui.android.damp.optimizations.AdamOptimizer;
@@ -9,11 +11,13 @@ import en.menghui.android.damp.optimizations.GDOptimizer;
 import en.menghui.android.damp.optimizations.NetsterovOptimizer;
 import en.menghui.android.damp.optimizations.SGDOptimizer;
 import en.menghui.android.damp.optimizations.WindowGradOptimizer;
+import en.menghui.android.damp.utils.MathUtils;
 import en.menghui.android.damp.utils.MatrixUtils;
 import en.menghui.android.damp.utils.NeuralNetUtils;
 import Jama.Matrix;
 
 public class FullyConnectedLayer extends Layer {
+	private static final String TAG = "Fully Connected Layer";
 	// Batch Normalization parameters.
 	Matrix gamma;
 	Matrix beta;
@@ -62,19 +66,35 @@ public class FullyConnectedLayer extends Layer {
 		
 		try {
 			// this.output = NeuralNetUtils.sigmoid(NeuralNetUtils.add(this.input.times(this.W).times(1.0-this.dropoutP), this.b), false);
-			this.output = NeuralNetUtils.sigmoid(h, false);
+			// this.output = NeuralNetUtils.sigmoid(h, false);
+			this.output = activation.forwardProp(h);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 		
-		this.yOut = NeuralNetUtils.argmax(this.output, 1);
 		
+		/* 
 		this.dropoutInput = dropout(dropoutInpt, this.dropoutP);
 		try {
-			this.dropoutOutput = NeuralNetUtils.sigmoid(NeuralNetUtils.add(this.dropoutInput.times(this.W), this.b), false);
+			// this.dropoutOutput = NeuralNetUtils.sigmoid(NeuralNetUtils.add(this.dropoutInput.times(this.W), this.b), false);
+			this.dropoutOutput = activation.forwardProp(NeuralNetUtils.add(this.dropoutInput.times(this.W), this.b));
 		} catch (Exception e) {
 			e.printStackTrace();
+		} */
+		
+		if (this.useDropout) {
+			if (this.isTraining) {
+				this.dropoutMat = new Matrix(this.output.getRowDimension(), this.output.getColumnDimension());
+				this.dropoutMat = this.dropout(this.dropoutMat, this.dropoutP);
+			} else {
+				this.dropoutMat = new Matrix(this.output.getRowDimension(), this.output.getColumnDimension(), this.dropoutP);
+			}
+			
+			this.output.arrayTimesEquals(this.dropoutMat);
 		}
+		
+		
+		this.yOut = NeuralNetUtils.argmax(this.output, 1);
 	}
 	
 	public double accuracy(Matrix y) {
@@ -106,15 +126,25 @@ public class FullyConnectedLayer extends Layer {
 		}
 		
 		
-		Matrix deriv = NeuralNetUtils.sigmoid(this.output, true);
+		// Matrix deriv = NeuralNetUtils.sigmoid(this.output, true);
+		Matrix deriv = activation.backProp(this.output);
+		
+		
+		Matrix delta;
+		if (this.useDropout) {
+			delta = bpIn.arrayTimes(deriv).arrayTimes(this.dropoutMat);
+		} else {
+			delta = bpIn.arrayTimes(deriv);
+		}
+		
 		
 		// this.bpOutput = bpIn.times(this.W.transpose()).arrayTimes(deriv);
-		this.bpOutput = bpIn.arrayTimes(deriv).times(this.W.transpose());
+	    this.bpOutput = delta.times(this.W.transpose());
 		
 		// Matrix dW = this.input.transpose().times(bpInput);
 		// Matrix db = NeuralNetUtils.sum(bpInput, 0);
 		// this.dW = this.input.transpose().times(bpIn);
-		this.dW = this.input.transpose().times(bpIn.arrayTimes(deriv));
+		this.dW = this.input.transpose().times(delta);
 		this.db = NeuralNetUtils.sum(bpIn, 0);
 		
 		// Add regularization terms (b1 and b2 don't have regularization terms)
@@ -124,9 +154,23 @@ public class FullyConnectedLayer extends Layer {
 	}
 	
 	private Matrix dropout(Matrix inp, double dropoutP) {
-		Matrix out = new Matrix(inp.getRowDimension(), inp.getColumnDimension());
+		Matrix out = new Matrix(inp.getRowDimension(), inp.getColumnDimension(), 1.0);
 		
-		return inp;
+		Random random = new Random(en.menghui.android.damp.utils.RandomUtilities.seed());
+		
+		for (int i = 0; i < out.getRowDimension(); i++) {
+			for (int j = 0; j < out.getColumnDimension(); j++) {
+				// out.set(i, j, MathUtils.getBinomial(1, dropoutP));
+				
+				if (random.nextDouble() < this.dropoutP) { // Drop!
+					out.set(i, j, 0.0);
+				} else {
+					out.set(i, j, 1.0);
+				}
+			}
+		}
+		
+		return out;
 	}
 	
 	public void optimize() {

@@ -266,7 +266,7 @@ public class NeuralNetUtils {
 		
 		for (int i = 0; i < inp.getRowDimension(); i++) {
 			for (int j = 0; j < inp.getColumnDimension(); j++) {
-				if (value < inp.get(i, j)) {
+				if (value > inp.get(i, j)) {
 					out.set(i, j, value);
 				}
 			}
@@ -301,7 +301,84 @@ public class NeuralNetUtils {
 		}
 	}
 	
-	public static Matrix featureNormalize(Matrix mat) {
+	public static Matrix featureNormalize(Matrix mat, int axis) {
+		int n = 0;
+		if (axis == 0) {
+			n = mat.getRowDimension();
+		} else if (axis == 1) {
+			n = mat.getColumnDimension();
+		} else if (axis == -1) {
+			n = mat.getRowDimension() * mat.getColumnDimension();
+		}
+		
+		Matrix sum = new Matrix(1, 1);
+		if (axis == 0) {
+			sum = sum(mat, 0);
+		} else if (axis == 1) {
+			sum = sum(mat, 1);
+		} else if (axis == -1) {
+			sum = sum(mat, -1);
+		}
+		
+		Matrix meanMat = new Matrix(mat.getRowDimension(), mat.getColumnDimension());
+		Matrix nMat = new Matrix(1, 1);
+		if (axis == 0) {
+			nMat = new Matrix(1, mat.getColumnDimension(), 1.0/n);
+			
+			Matrix mMat = sum.arrayTimes(nMat);
+			for (int i = 0; i < n; i++) {
+				meanMat.setMatrix(i, i, 0, mat.getColumnDimension()-1, mMat);
+			}
+		} else if (axis == 1) {
+			nMat = new Matrix(mat.getRowDimension(), 1, 1.0/n);
+			
+			Matrix mMat = sum.arrayTimes(nMat);
+			for (int i = 0; i < n; i++) {
+				meanMat.setMatrix(0, mat.getRowDimension()-1, i, i, mMat);
+			}
+		} else if (axis == -1) {
+			meanMat = new Matrix(mat.getRowDimension(), mat.getColumnDimension(), sum.get(0,0) / (mat.getRowDimension() * mat.getColumnDimension()));
+		}
+		
+		Matrix xNormMat = mat.minus(meanMat);
+		
+		Matrix xNormSqrMat = xNormMat.arrayTimes(xNormMat);
+		
+		if (axis == 0) {
+			sum = sum(xNormSqrMat, 0);
+		} else if (axis == 1) {
+			sum = sum(xNormSqrMat, 1);
+		} else if (axis == -1) {
+			sum = sum(xNormSqrMat, -1);
+		}
+		
+		Matrix stdMat = new Matrix(1, 1);
+		if (axis == 0 || axis == 1) {
+			Matrix varianceMat = sum.arrayTimes(nMat);
+			
+			Matrix stMat = MatrixUtils.sqrt(varianceMat);
+			stdMat = new Matrix(mat.getRowDimension(), mat.getColumnDimension());
+			
+			if (axis == 0) {
+				for (int i = 0; i < n; i++) {
+					stdMat.setMatrix(i, i, 0, mat.getColumnDimension()-1, stMat);
+			    }
+			} else if (axis == 1) {
+				for (int i = 0; i < n; i++) {
+					stdMat.setMatrix(0, mat.getRowDimension()-1, i, i, stMat);
+			    }
+			}
+		} else if (axis == -1) {
+			Matrix varianceMat = new Matrix(mat.getRowDimension(), mat.getColumnDimension(), sum.get(0,0) / (mat.getRowDimension() * mat.getColumnDimension()));
+			stdMat = MatrixUtils.sqrt(varianceMat);
+		}
+		
+		Matrix normMat = xNormMat.arrayRightDivide(stdMat);
+		
+		return normMat;
+	}
+	
+	public static Matrix featureNormalizeAxisZero(Matrix mat) {
 		int n = mat.getRowDimension();
 		Matrix sum = sum(mat, 0);
 		// Matrix sum = sum(mat, -1);
@@ -332,7 +409,54 @@ public class NeuralNetUtils {
 		Matrix normMat = xNormMat.arrayRightDivide(stdMat);
 		
 		return normMat;
-	}  
+	}
 	
+	public static Matrix featureNormalizeAxisOne(Matrix mat) {
+		int n = mat.getColumnDimension();
+		Matrix sum = sum(mat, 1);
+		Matrix nMat = new Matrix(mat.getRowDimension(), 1, 1.0/n);
+		
+		Matrix mMat = sum.arrayTimes(nMat);
+		Matrix meanMat = new Matrix(mat.getRowDimension(), mat.getColumnDimension());
+		for (int i = 0; i < n; i++) {
+			meanMat.setMatrix(0, mat.getRowDimension()-1, i, i, mMat);
+		}
+		
+		Matrix xNormMat = mat.minus(meanMat);
+		
+		Matrix xNormSqrMat = xNormMat.arrayTimes(xNormMat);
+		sum = sum(xNormSqrMat, 1);
+		Matrix varianceMat = sum.arrayTimes(nMat);
+		Matrix stMat = MatrixUtils.sqrt(varianceMat);
+		Matrix stdMat = new Matrix(mat.getRowDimension(), mat.getColumnDimension());
+		for (int i = 0; i < n; i++) {
+			stdMat.setMatrix(0, mat.getRowDimension()-1, i, i, stMat);
+		}
+		
+		Matrix normMat = xNormMat.arrayRightDivide(stdMat);
+		
+		return normMat;
+	}
+	
+	public static Matrix featureNormalizeSingle(Matrix mat) {
+		int n = mat.getRowDimension();
+		
+		Matrix sum = sum(mat, -1);
+		
+		Matrix meanMat = new Matrix(mat.getRowDimension(), mat.getColumnDimension(), sum.get(0,0) / (mat.getRowDimension() * mat.getColumnDimension()));
+		
+		Matrix xNormMat = mat.minus(meanMat);
+		
+		Matrix xNormSqrMat = xNormMat.arrayTimes(xNormMat);
+		
+		sum = sum(xNormSqrMat, -1);
+		
+		Matrix varianceMat = new Matrix(mat.getRowDimension(), mat.getColumnDimension(), sum.get(0,0) / (mat.getRowDimension() * mat.getColumnDimension()));
+		Matrix stdMat = MatrixUtils.sqrt(varianceMat);
+		
+		Matrix normMat = xNormMat.arrayRightDivide(stdMat);
+		
+		return normMat;
+	}  
 	
 } 

@@ -1,7 +1,9 @@
 package en.menghui.android.damp.layers;
 
 import java.util.List;
+import java.util.Random;
 
+import android.util.Log;
 import en.menghui.android.damp.optimizations.AdaDeltaOptimizer;
 import en.menghui.android.damp.optimizations.AdaGradOptimizer;
 import en.menghui.android.damp.optimizations.AdamOptimizer;
@@ -9,11 +11,14 @@ import en.menghui.android.damp.optimizations.GDOptimizer;
 import en.menghui.android.damp.optimizations.NetsterovOptimizer;
 import en.menghui.android.damp.optimizations.SGDOptimizer;
 import en.menghui.android.damp.optimizations.WindowGradOptimizer;
+import en.menghui.android.damp.utils.MathUtils;
 import en.menghui.android.damp.utils.MatrixUtils;
 import en.menghui.android.damp.utils.NeuralNetUtils;
+import en.menghui.android.damp.utils.RandomUtilities;
 import Jama.Matrix;
 
 public class SoftmaxLayer extends Layer {
+	private static final String TAG = "Softmax Layer";
 	private Matrix targetOneHot;
 	
 	public SoftmaxLayer(int nIn, int nOut, double dropoutP) {
@@ -51,23 +56,29 @@ public class SoftmaxLayer extends Layer {
 		}
 		
 		try {
-			this.output = NeuralNetUtils.sigmoid(NeuralNetUtils.add(this.input.times(this.W).times(1.0-this.dropoutP), this.b), false);
+			this.output = activation.forwardProp(NeuralNetUtils.add(this.input.times(this.W).times(1.0-this.dropoutP), this.b));
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+		
+		
+		/* this.dropoutInput = dropout(dropoutInpt, this.dropoutP);
+		try {
+			this.dropoutOutput = activation.forwardProp(NeuralNetUtils.add(this.dropoutInput.times(this.W), this.b));
+		} catch (Exception e) {
+			e.printStackTrace();
+		} */
+		
+		if (this.useDropout) {
+			this.output = this.dropout.forwardProp(this.output, this.isTraining);
+			this.dropoutMat = this.dropout.dropoutMat;
+		}
+		
 		
 		try {
 			this.yOut = NeuralNetUtils.argmax(this.output, 1);
 		} catch (Exception e1) {
 			e1.printStackTrace();
-		}
-		
-		this.dropoutInput = dropout(dropoutInpt, this.dropoutP);
-		
-		try {
-			this.dropoutOutput = NeuralNetUtils.sigmoid(NeuralNetUtils.add(this.dropoutInput.times(this.W), this.b), false);
-		} catch (Exception e) {
-			e.printStackTrace();
 		}
 	}
 	
@@ -81,12 +92,12 @@ public class SoftmaxLayer extends Layer {
 		int correct = 0;
 		
 		for (int i = 0; i < y.getRowDimension(); i++) {
-			if (y.get(i, 0) == this.yOut.get(i, 0)) {
+			if ((int)this.target.get(i, 0) == (int)this.yOut.get(i, 0)) {
 				correct++;
 			}
 		}
 		
-		double accuracy = (correct/y.getRowDimension()) * 100.0;
+		double accuracy = ((double)correct/(double)y.getRowDimension()) * 100.0;
 		
 		return accuracy;
 	}
@@ -94,24 +105,32 @@ public class SoftmaxLayer extends Layer {
 	public void backProp(Matrix bpInput) {
 		this.bpInput = bpInput;
 		
-		Matrix delta = this.output.minus(this.targetOneHot);
+		Matrix error = this.output.minus(this.targetOneHot);
 		
 		/* Matrix delta = this.output.copy();
 		for (int k = 0; k < delta.getRowDimension(); k++) {
 			delta.set(k, (int)target.get(k, 0), delta.get(k, (int)target.get(k, 0)) - 1.0);
 		} */
 		
+		Matrix deriv = activation.backProp(this.output);
 		
-		Matrix deriv = NeuralNetUtils.sigmoid(this.output, true);
+		
+		Matrix delta;
+		if (useDropout) {
+			delta = error.arrayTimes(deriv).arrayTimes(this.dropoutMat);
+		} else {
+			delta = error.arrayTimes(deriv);
+		}
+		
 		
 		// this.bpOutput = delta.times(this.W.transpose()).arrayTimes(deriv);
-		this.bpOutput = delta.arrayTimes(deriv).times(this.W.transpose());
+	    this.bpOutput = delta.times(this.W.transpose());
 		
 		// Matrix dW = this.input.transpose().times(delta);
 		// Matrix db = NeuralNetUtils.sum(delta, 0);
 		// this.dW = this.input.transpose().times(delta);
-		this.dW = this.input.transpose().times(delta.arrayTimes(deriv));
-		this.db = NeuralNetUtils.sum(delta, 0);
+		this.dW = this.input.transpose().times(delta);
+		this.db = NeuralNetUtils.sum(error, 0);
 		
 		// Add regularization terms (b1 and b2 don't have regularization terms)
 		dW.plusEquals(this.W.times(regLambda));
@@ -119,11 +138,6 @@ public class SoftmaxLayer extends Layer {
 		
 	}
 	
-	private Matrix dropout(Matrix inp, double dropoutP) {
-		Matrix out = new Matrix(inp.getRowDimension(), inp.getColumnDimension());
-		
-		return inp;
-	}
 	
 	public void optimize() {
 		if (this.optimizer instanceof AdamOptimizer) {

@@ -1,6 +1,13 @@
 package en.menghui.android.damp.layers;
 
+import en.menghui.android.damp.activations.Activation;
+import en.menghui.android.damp.activations.LinearActivation;
+import en.menghui.android.damp.costs.CostFunction;
+import en.menghui.android.damp.costs.LRCostFunction;
+import en.menghui.android.damp.evaluations.AccuracyEvaluator;
+import en.menghui.android.damp.evaluations.Evaluator;
 import en.menghui.android.damp.optimizations.Optimizer;
+import en.menghui.android.damp.regularizations.Dropout;
 import Jama.Matrix;
 
 public class Layer {
@@ -45,6 +52,7 @@ public class Layer {
 	public Matrix grads;
 	
 	public String activationFunction;
+	public Activation activation = new LinearActivation();
 	public String optimizationFunction = "gd";
 	public Optimizer optimizer = new Optimizer();
 	
@@ -58,9 +66,16 @@ public class Layer {
 	public int globalStep = 0;
 	public int decaySteps = 0;
 	
-	public double dropoutP;
+	public boolean isTraining = true;
+	public Dropout dropout = new Dropout();
+	public boolean useDropout = false;
+	public double dropoutP = 0.5;
+	public Matrix dropoutMat;
 	
 	public boolean useBatchNormalization = false;
+	
+	public CostFunction costFunc = new LRCostFunction();
+	public Evaluator evaluator = new AccuracyEvaluator();
 	
 	public void sgd() {
 		// Add regularization terms (b1 and b2 don't have regularization terms)

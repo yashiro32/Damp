@@ -3,12 +3,15 @@ package en.menghui.android.damp.networks;
 import java.util.ArrayList;
 import java.util.List;
 
+import android.util.Log;
 import Jama.Matrix;
 import en.menghui.android.damp.layers.FullyConnectedLayer;
 import en.menghui.android.damp.layers.Layer;
 import en.menghui.android.damp.layers.SoftmaxLayer;
 
 public class FeedForwardNetwork extends Network {
+	private static final String TAG = "Feed Forward Network";
+
 	public List<Layer> layers = new ArrayList<Layer>();
 	
 	public Matrix inputs;
@@ -60,12 +63,18 @@ public class FeedForwardNetwork extends Network {
 	public void fit() {
 		for (int i = 0; i < epochs; i++) {
 			forwardProp();
+			
+			Log.d(TAG, "Accuracy: " + this.layers.get(this.layers.size()-1).evaluator.evaluate(this.layers.get(this.layers.size()-1).yOut, this.targets));
+			
 		    backProp();
 		}
 	}
 	
 	public void predict(Matrix set) {
 		for (int i = 0; i < layers.size(); i++) {
+			// Set the isTraining variable to false.
+			layers.get(i).isTraining = false;
+			
 			if (layers.get(i).type.equals("fully connected")) {
 				if (i == 0) {
 					((FullyConnectedLayer)layers.get(i)).forwardProp(set, set, batchSize);
