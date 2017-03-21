@@ -73,8 +73,8 @@ public class ConvolutionLayer {
 			for (int cOut = 0; cOut < numChannelsOut; cOut++) {
 				for (int y = 0; y < imageHeight; y++) {
 					int yOffMin = intMax(-y, -filMidH);
-					int yOffMax	= intMin(imageWidth-y, filMidW+1);
-					for (int x = 0; x < imageHeight; x++) {
+					int yOffMax	= intMin(imageHeight-y, filMidH+1);
+					for (int x = 0; x < imageWidth; x++) {
 						int xOffMin = intMax(-x, -filMidW);
 						int xOffMax = intMin(imageWidth-x, filMidW+1);
 						double value = 0.0;

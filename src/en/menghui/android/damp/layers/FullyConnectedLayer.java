@@ -117,17 +117,26 @@ public class FullyConnectedLayer extends Layer {
 		Matrix bpIn = bpInput;
 		
 		
-		if (this.useBatchNormalization) {
+		/* if (this.useBatchNormalization) {
 			// NeuralNetUtils.printMatrix(bpInput);
 		    double[][] x = {{1.0, 2.0, 5.0}, {3.0, 4.0, 6.0}};
 		    Matrix h = new Matrix(x);
 		    bpIn = batchNormalizationBackward(bpInput);
 		    // NeuralNetUtils.printMatrix(bnbpInput);
-		}
+		} */
 		
 		
 		// Matrix deriv = NeuralNetUtils.sigmoid(this.output, true);
 		Matrix deriv = activation.backProp(this.output);
+		
+		
+		if (this.useBatchNormalization) {
+			// NeuralNetUtils.printMatrix(bpInput);
+		    double[][] x = {{1.0, 2.0, 5.0}, {3.0, 4.0, 6.0}};
+		    Matrix h = new Matrix(x);
+		    deriv = batchNormalizationBackward(deriv);
+		    // NeuralNetUtils.printMatrix(bnbpInput);
+		}
 		
 		
 		Matrix delta;
@@ -378,4 +387,6 @@ public class FullyConnectedLayer extends Layer {
 	    
 	    return dx;
 	}
+	
+	
 }

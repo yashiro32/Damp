@@ -2,11 +2,12 @@ package en.menghui.android.damp.examples;
 
 import java.util.ArrayList;
 import java.util.List;
-
+import java.util.Arrays;
 import en.menghui.android.damp.R;
 import en.menghui.android.damp.activations.ReluActivation;
 import en.menghui.android.damp.activations.SigmoidActivation;
 import en.menghui.android.damp.activations.TanhActivation;
+import en.menghui.android.damp.arrays.Tensor;
 import en.menghui.android.damp.layers.FullyConnectedLayer;
 import en.menghui.android.damp.layers.Layer;
 import en.menghui.android.damp.layers.SoftmaxLayer;
@@ -20,6 +21,7 @@ import en.menghui.android.damp.optimizations.SGDOptimizer;
 import en.menghui.android.damp.optimizations.WindowGradOptimizer;
 import en.menghui.android.damp.utils.NeuralNetUtils;
 import Jama.Matrix;
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.os.Bundle;
 import android.util.Log;
@@ -27,6 +29,7 @@ import android.util.Log;
 public class TitanicLRExample extends Activity {
 	private static final String TAG = "Titanic LR Example";
 	
+	@SuppressLint("Assert")
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -37,6 +40,13 @@ public class TitanicLRExample extends Activity {
 		double[][] teDa = new double[][] { {1., -1.,  2.}, { 2.,  0.,  0.}, { 0.,  1., -1.} };
 		Matrix teMat = new Matrix(teDa);
 		NeuralNetUtils.printMatrix(NeuralNetUtils.featureNormalize(teMat)); */
+		
+		/* double[][][][] tearr = new double[][][][] {{{{1.0,2.0,3.0},{4.0,5.0,6.0}}, {{7.0,8.0,9.0},{10.0,11.0,12.0}}}, {{{13.0,14.0,15.0},{16.0,17.0,18.0}}, {{19.0,20.0,21.0},{22.0,23.0,24.0}}}};
+		double[][] tematarr = new double[][] {{1.0,2.0,3.0,4.0,5.0,6.0,7.0,8.0,9.0,10.0,11.0,12.0}, {13.0,14.0,15.0,16.0,17.0,18.0,19.0,20.0,21.0,22.0,23.0,24.0}};
+		Tensor tesor = new Tensor(Arrays.asList(2,2,2,3));
+		tesor.tmat = new Matrix(tematarr);
+		Log.d(TAG, "Shape 0: " + tearr.length + " Shape 1: " + tearr[0].length + " Shape 2: " + tearr[0][0].length + " Shape 3: " + tearr[0][0][0].length);
+		Log.d(TAG, "Array value: " + tearr[0][0][0][1] + " Matrix value: " + tesor.get(Arrays.asList(0,0,0,1))); */
 		
 		
 		TitanicDataSet dataSet = new TitanicDataSet(this);
