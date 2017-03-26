@@ -12,7 +12,8 @@ Uses JAMA a basic linear algebra package for Java.
 ##### Binary Classification using Titanic Dataset. 
 ##### Reference from Karthik M Swamy github code for TFLearn (https://github.com/karthikmswamy/TFTutorials/blob/master/TFLearn_Tutorials/Titanic_TFLearn.py).
 
-```TitanicDataSet dataSet = new TitanicDataSet(this);
+```
+TitanicDataSet dataSet = new TitanicDataSet(this);
 int[] columnsToIgnore = {2, 7};
 dataSet.loadDataSet(0, columnsToIgnore);
 
@@ -50,7 +51,8 @@ TitanicDataSet testSet = preprocess(testList, 0, columnsToIgnore);
 network.predict(testSet.featuresMatrix);
 
 NeuralNetUtils.printMatrix(network.layers.get(network.layers.size()-1).output);
-NeuralNetUtils.printMatrix(network.layers.get(network.layers.size()-1).yOut);```
+NeuralNetUtils.printMatrix(network.layers.get(network.layers.size()-1).yOut);
+```
 
 
 
