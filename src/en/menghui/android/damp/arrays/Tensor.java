@@ -19,44 +19,44 @@ public class Tensor {
 	public Tensor(List<Integer> shape) {
 		this.shape = shape;
 		
-		int columns = 1;
-		if (shape.size() > 1) {
-			for (int i = 1; i < shape.size(); i++) {
-				columns *= shape.get(i);
-		    }
-		}
-		
-		tmat = new Matrix(shape.get(0), columns);
+		tmat = new Matrix(shape.get(0), getColumns());
 	}
 	
 	public Tensor(List<Integer> shape, double value) {
 		this.shape = shape;
 		
-		int columns = 1;
-		if (shape.size() > 1) {
-			for (int i = 1; i < shape.size(); i++) {
-				columns *= shape.get(i);
-		    }
-		}
-		
-		tmat = new Matrix(shape.get(0), columns, value);
+		tmat = new Matrix(shape.get(0), getColumns(), value);
 	}
 	
 	public Tensor(List<Integer> shape, boolean random) {
 		this.shape = shape;
 		
+		if (random) {
+			this.tmat = Matrix.random(shape.get(0), getColumns());
+		} else { 
+			tmat = new Matrix(shape.get(0), getColumns());
+		}
+	}
+	
+	private int getSize() {
+		int size = 1;
+		
+		for (int i = 0; i < this.shape.size(); i++) {
+			size *= this.shape.get(i);
+		}
+		
+		return size;
+	}
+	
+	private int getColumns() {
 		int columns = 1;
-		if (shape.size() > 1) {
-			for (int i = 1; i < shape.size(); i++) {
-				columns *= shape.get(i);
+		if (this.shape.size() > 1) {
+			for (int i = 1; i < this.shape.size(); i++) {
+				columns *= this.shape.get(i);
 		    }
 		}
 		
-		if (random) {
-			this.tmat = Matrix.random(shape.get(0), columns);
-		} else { 
-			tmat = new Matrix(shape.get(0), columns);
-		}
+		return columns;
 	}
 	
 	public double get(int n, int d, int y, int x) {
