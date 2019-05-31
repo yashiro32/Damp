@@ -21,7 +21,7 @@ public class AdamOptimizer extends Optimizer {
 	}
 	
 	public List<Matrix> optimize(Matrix m, Matrix v, Matrix d, Matrix p, int epochCount) {
-		List<Matrix> list = new ArrayList<Matrix>();
+		List<Matrix> list = new ArrayList<>();
 		
 		double alpha = 0.01;
 		this.learningRate = alpha * Math.sqrt(1.0 - Math.pow(this.beta2, epochCount)) / (1.0 - Math.pow(beta1, epochCount));
@@ -53,7 +53,7 @@ public class AdamOptimizer extends Optimizer {
 	}
 	
 	public List<List<Volume>> optimize(List<Volume> m, List<Volume> v, List<Volume> pag, int epochCount) {
-		List<List<Volume>> list = new ArrayList<List<Volume>>();
+		List<List<Volume>> list = new ArrayList<>();
 		
 		for (int i = 0; i < m.size(); i++) {
 			double[] mW = m.get(i).weights;
@@ -93,7 +93,7 @@ public class AdamOptimizer extends Optimizer {
 	}
 	
 	public List<Volume> optimize(Volume m, Volume v, Volume pag, int epochCount) {
-		List<Volume> list = new ArrayList<Volume>();
+		List<Volume> list = new ArrayList<>();
 		
 		int plen = pag.weights.length;
 		for (int j = 0; j < plen; j++) {

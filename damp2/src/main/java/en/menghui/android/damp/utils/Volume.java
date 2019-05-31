@@ -118,10 +118,8 @@ public class Volume {
 	public Volume Clone() {
 		Volume volume = new Volume(this.width, this.height, this.depth, 0.0);
 		int n = this.weights.length;
-		
-		for (int i = 0; i < n; i++) {
-			volume.weights[i] = this.weights[i];
-		}
+
+		System.arraycopy(this.weights, 0, volume.weights, 0, n);
 		
 		return volume;
 	}

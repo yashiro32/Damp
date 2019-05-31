@@ -68,7 +68,7 @@ public class ConvLayer {
 	public List<Volume> forwardProp(List<Volume> input) {
 		this.inputActivation = input;
 		
-		List<Volume> outputActivation = new ArrayList<Volume>();
+		List<Volume> outputActivation = new ArrayList<>();
 		for (int i = 0; i < input.size(); i++) {
 			Volume volume = new Volume(this.outputWidth, this.outputHeight, this.outputDepth, 0.0);
 			outputActivation.add(volume);
@@ -201,9 +201,9 @@ public class ConvLayer {
 		
 		// Initializations.
 		double bias = this.biasPref;
-		this.filters = new ArrayList<Volume>();
-		this.mfilters = new ArrayList<Volume>();
-		this.vfilters = new ArrayList<Volume>();
+		this.filters = new ArrayList<>();
+		this.mfilters = new ArrayList<>();
+		this.vfilters = new ArrayList<>();
 		
 		for (int i = 0; i < this.outputDepth; i++) {
 			this.filters.add(new Volume(this.width, this.height, this.inputDepth));

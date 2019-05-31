@@ -19,7 +19,7 @@ public class WindowGradOptimizer extends Optimizer {
 	}
 	
 	public List<Matrix> optimize(Matrix m, Matrix d, Matrix p) {
-		List<Matrix> list = new ArrayList<Matrix>();
+		List<Matrix> list = new ArrayList<>();
 		
 		// this is adagrad but with a moving window weighted average
         // so the gradient is not accumulated over the entire history of the run. 

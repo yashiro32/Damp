@@ -11,9 +11,9 @@ public class LSTMNetwork {
 	
 	public LSTMNetwork(LSTMParam lstmParam) {
 		this.lstmParam = lstmParam;
-		this.lstmNodeList = new ArrayList<LSTMNode>();
+		this.lstmNodeList = new ArrayList<>();
 		// Input sequence.
-		this.xList = new ArrayList<Matrix>();
+		this.xList = new ArrayList<>();
 	}
 	
 	public void yListIs(double[] yList) {
@@ -35,7 +35,7 @@ public class LSTMNetwork {
 	}
 	
 	public void xListClear() {
-		this.xList = new ArrayList<Matrix>();
+		this.xList = new ArrayList<>();
 	}
 	
 	public void xListAdd(Matrix x) {

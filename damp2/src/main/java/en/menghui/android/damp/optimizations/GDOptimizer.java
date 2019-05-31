@@ -14,7 +14,7 @@ public class GDOptimizer extends Optimizer {
 	}
 	
 	public List<Matrix> optimize(Matrix d, Matrix p) {
-		List<Matrix> list = new ArrayList<Matrix>();
+		List<Matrix> list = new ArrayList<>();
 		
 		this.adjustLearningRate();
 		

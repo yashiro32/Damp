@@ -14,7 +14,7 @@ import Jama.Matrix;
 public class Tensor {
 	private static final String TAG = "Tensor";
 	public Matrix tmat;
-	public List<Integer> shape = new ArrayList<Integer>();
+	public List<Integer> shape = new ArrayList<>();
 	
 	public Tensor(List<Integer> shape) {
 		this.shape = shape;
@@ -158,11 +158,11 @@ public class Tensor {
 	
 	@SuppressLint("UseSparseArrays")
 	public static Tensor sumTensorAxises(Tensor tensor, List<Integer> axis) {
-		List<Integer> reshape = new ArrayList<Integer>();
-		List<Integer> shape = new ArrayList<Integer>();
+		List<Integer> reshape = new ArrayList<>();
+		List<Integer> shape = new ArrayList<>();
 		
-		Map<Integer, Integer> reshapeMap = new HashMap<Integer, Integer>();
-		Map<Integer, Integer> shapeMap = new HashMap<Integer, Integer>();
+		Map<Integer, Integer> reshapeMap = new HashMap<>();
+		Map<Integer, Integer> shapeMap = new HashMap<>();
 		
 		int reshapeCount = 0;
 		int shapeCount = 0;
@@ -190,10 +190,10 @@ public class Tensor {
 			shapeSum *= shape.get(i);
 		}
 		
-		List<Integer> reshape2 = new ArrayList<Integer>();
-		List<Integer> shape2 = new ArrayList<Integer>();
+		List<Integer> reshape2 = new ArrayList<>();
+		List<Integer> shape2 = new ArrayList<>();
 		for (int a = 0; a < reshapeSum; a++) {
-			reshape2 = new ArrayList<Integer>();
+			reshape2 = new ArrayList<>();
 			int reshapeSize = 1;
 			for (int b = 0; b < reshape.size(); b++) {
 				reshapeSize *= reshape.get(b);
@@ -207,7 +207,7 @@ public class Tensor {
 			
 			double sum = 0.0;
 			for (int c = 0; c < shapeSum; c++) {
-				shape2 = new ArrayList<Integer>();
+				shape2 = new ArrayList<>();
 				int shapeSize = 1;
 			    for (int d = 0; d < shape.size(); d++) {
 			    	shapeSize *= shape.get(d);
@@ -218,7 +218,7 @@ public class Tensor {
 			    Collections.reverse(shape2);
 			    // Log.i(TAG, "Shape 2: " + shape2.toString());
 			    
-			    List<Integer> list = new ArrayList<Integer>();
+			    List<Integer> list = new ArrayList<>();
 			    for (int e = 0; e < tensor.shape.size(); e++) {
 			    	if (reshapeMap.containsKey(e)) {
 			    		list.add(reshape2.get(reshapeMap.get(e)));

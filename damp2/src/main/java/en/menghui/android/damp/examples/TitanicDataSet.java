@@ -66,9 +66,9 @@ public class TitanicDataSet {
 	
 	private boolean containsValue(int[] arr, int value) {
 		boolean contains = false;
-		
-		for (int i = 0; i < arr.length; i++) {
-			if (arr[i] == value) {
+
+		for (int item : arr) {
+			if (item == value) {
 				contains = true;
 				break;
 			}

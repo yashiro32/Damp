@@ -74,7 +74,7 @@ public class TitanicLRExample extends AppCompatActivity {
 		sf1.optimizer = new SGDOptimizer(0.9, 0.01);
 		
 		FeedForwardNetwork network = new FeedForwardNetwork(NeuralNetUtils.featureNormalize(dataSet.featuresMatrix, 0), dataSet.labelsMatrix, 16);
-		List<Layer> layers = new ArrayList<Layer>();
+		List<Layer> layers = new ArrayList<>();
 		layers.add(fc1);
 		// layers.add(fc2);
 		// layers.add(fc3);
@@ -86,7 +86,7 @@ public class TitanicLRExample extends AppCompatActivity {
 		// NeuralNetUtils.printMatrix(network.layers.get(network.layers.size()-1).output);
 		// NeuralNetUtils.printMatrix(network.layers.get(network.layers.size()-1).yOut);
 		
-		List<String[]> testList = new ArrayList<String[]>();
+		List<String[]> testList = new ArrayList<>();
 		String[] dicaprio = {"0", "3", "JackDawson", "male", "19", "0", "0", "N/A", "5.0000"};
 		String[] winslet = {"1", "1", "Rose DeWitt Bukater", "female", "17", "1", "2", "N/A", "100.0000"};
 		testList.add(dicaprio);

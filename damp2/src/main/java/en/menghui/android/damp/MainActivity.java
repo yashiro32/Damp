@@ -63,7 +63,7 @@ public class MainActivity extends AppCompatActivity {
 		// NeuralNetUtils.printMatrix(sf1.yOut);
 		
 		FeedForwardNetwork network = new FeedForwardNetwork(X, y, 60);
-		List<Layer> layers = new ArrayList<Layer>();
+		List<Layer> layers = new ArrayList<>();
 		layers.add(fc1);
 		layers.add(sf1);
 		network.layers = layers;
@@ -73,11 +73,11 @@ public class MainActivity extends AppCompatActivity {
 		NeuralNetUtils.printMatrix(network.layers.get(network.layers.size()-1).output);
 		NeuralNetUtils.printMatrix(network.layers.get(network.layers.size()-1).yOut);
 		
-		// testConv();
-		// testPool();
-		// testRecurrent();
-		// testLSTM(0.1);
-		// testBLSTM();
+//		 testConv();
+//		 testPool();
+//		 testRecurrent();
+//		 testLSTM(0.1);
+//		 testBLSTM();
 	}
 	
 	private void simpleImplementation() {

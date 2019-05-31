@@ -17,7 +17,7 @@ public class NetsterovOptimizer extends Optimizer {
 	}
 	
 	public List<Matrix> optimize(Matrix m, Matrix d, Matrix p) {
-		List<Matrix> list = new ArrayList<Matrix>();
+		List<Matrix> list = new ArrayList<>();
 		
         Matrix dx = m;
 		m = m.times(this.momentum).plus(d.times(this.learningRate));

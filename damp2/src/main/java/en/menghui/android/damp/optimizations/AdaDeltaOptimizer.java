@@ -19,7 +19,7 @@ public class AdaDeltaOptimizer extends Optimizer {
 	}
 	
 	public List<Matrix> optimize(Matrix m, Matrix v, Matrix d, Matrix p) {
-		List<Matrix> list = new ArrayList<Matrix>();
+		List<Matrix> list = new ArrayList<>();
 		
 		Matrix epsilonMat = new Matrix(p.getRowDimension(), p.getColumnDimension(), this.eps);
 		m = m.times(this.ro).plus(d.arrayTimes(d).times(1 - this.ro));

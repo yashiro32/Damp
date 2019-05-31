@@ -11,7 +11,7 @@ import Jama.Matrix;
 public class Network {
 	public String name = "";
 	
-	public List<Layer> layers = new ArrayList<Layer>();
+	public List<Layer> layers = new ArrayList<>();
 	
 	public int epochs = 0; 
 }

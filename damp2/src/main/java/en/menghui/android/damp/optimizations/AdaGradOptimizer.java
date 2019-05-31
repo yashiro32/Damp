@@ -15,7 +15,7 @@ public class AdaGradOptimizer extends Optimizer {
 	}
 	
  	public List<Matrix> optimize(Matrix m, Matrix d, Matrix p) {
-		List<Matrix> list = new ArrayList<Matrix>();
+		List<Matrix> list = new ArrayList<>();
 		
 		this.adjustLearningRate();
 		

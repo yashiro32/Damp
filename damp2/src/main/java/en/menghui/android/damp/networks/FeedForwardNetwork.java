@@ -12,7 +12,7 @@ import en.menghui.android.damp.layers.SoftmaxLayer;
 public class FeedForwardNetwork extends Network {
 	private static final String TAG = "Feed Forward Network";
 
-	public List<Layer> layers = new ArrayList<Layer>();
+	public List<Layer> layers = new ArrayList<>();
 	
 	public Matrix inputs;
 	public Matrix targets;

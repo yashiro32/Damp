@@ -134,10 +134,10 @@ public class ConvolutionLayer {
 				}
 			}
 		}
-		
-		for (int i = 0; i < filtersGrad.length; i++) {
+
+		for (Matrix[] matrices : filtersGrad) {
 			for (int j = 0; j < filtersGrad[0].length; j++) {
-				NeuralNetUtils.scalarLeftDivide(numImgs, filtersGrad[i][j]);
+				NeuralNetUtils.scalarLeftDivide(numImgs, matrices[j]);
 			}
 		}
 		

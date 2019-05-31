@@ -16,7 +16,7 @@ public class FileUtils {
 		BufferedReader br = null;
         String line = "";
         
-        List<String[]> list = new ArrayList<String[]>();
+        List<String[]> list = new ArrayList<>();
         
 		try {
 			/* InputStreamReader is = new InputStreamReader(context.getAssets().open(filename));

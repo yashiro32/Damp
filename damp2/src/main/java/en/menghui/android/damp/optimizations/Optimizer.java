@@ -27,7 +27,7 @@ public class Optimizer {
 	}
 	
 	public List<Matrix> optimize(Matrix m, Matrix v, Matrix d, Matrix p) {
-		List<Matrix> list = new ArrayList<Matrix>();
+		List<Matrix> list = new ArrayList<>();
 		
 		list.add(m);
 		list.add(v);
