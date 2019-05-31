@@ -62,7 +62,7 @@ public class Tensor {
 	public double get(int n, int d, int y, int x) {
 		int ix = ((this.shape.get(2) * d) + y) * this.shape.get(3) + x;
 		
-		// Log.d(TAG, "IX: " + ix);
+		// Log.i(TAG, "IX: " + ix);
 		
 		return this.tmat.get(n, ix);
 	}
@@ -83,7 +83,7 @@ public class Tensor {
 		
 		}
 		
-		// Log.d(TAG, "IX: " + ix);
+		// Log.i(TAG, "IX: " + ix);
 		
 		return this.tmat.get(indexes.get(0), ix);
 	}
@@ -202,7 +202,7 @@ public class Tensor {
 			}
 			
 			Collections.reverse(reshape2);
-			// Log.d(TAG, "Reshape 2: " + reshape2.toString());
+			// Log.i(TAG, "Reshape 2: " + reshape2.toString());
 			
 			
 			double sum = 0.0;
@@ -216,7 +216,7 @@ public class Tensor {
 			    }
 			    
 			    Collections.reverse(shape2);
-			    // Log.d(TAG, "Shape 2: " + shape2.toString());
+			    // Log.i(TAG, "Shape 2: " + shape2.toString());
 			    
 			    List<Integer> list = new ArrayList<Integer>();
 			    for (int e = 0; e < tensor.shape.size(); e++) {
@@ -227,7 +227,7 @@ public class Tensor {
 			    	}
 			    }
 			    
-			    // Log.d(TAG, "Shape List: " + list.toString());
+			    // Log.i(TAG, "Shape List: " + list.toString());
 			    sum += tensor.get(list);
 				
 		    }

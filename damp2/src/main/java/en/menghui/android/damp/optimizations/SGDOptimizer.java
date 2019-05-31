@@ -35,7 +35,7 @@ public class SGDOptimizer extends Optimizer {
 		list.add(d);
 		list.add(p);
 		
-		Log.d(TAG, "This layer is using SGD optimization technique.");
+		Log.i(TAG, "This layer is using SGD optimization technique.");
 		
 		return list;
 	}

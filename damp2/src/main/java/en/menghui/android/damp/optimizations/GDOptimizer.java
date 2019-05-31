@@ -24,7 +24,7 @@ public class GDOptimizer extends Optimizer {
 		list.add(d);
 		list.add(p);
 		
-		Log.d(TAG, "This layer is using Gradient Descent optimization technique.");
+		Log.i(TAG, "This layer is using Gradient Descent optimization technique.");
 		
 		return list;
 	}

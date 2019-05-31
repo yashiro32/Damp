@@ -31,7 +31,7 @@ public class NetsterovOptimizer extends Optimizer {
 		list.add(d);
 		list.add(p);
 		
-		Log.d(TAG, "This layer is using Netsterov optimization technique.");
+		Log.i(TAG, "This layer is using Netsterov optimization technique.");
 		
 		return list;
 	}

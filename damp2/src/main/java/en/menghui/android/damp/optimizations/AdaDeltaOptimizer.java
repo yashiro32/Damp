@@ -35,7 +35,7 @@ public class AdaDeltaOptimizer extends Optimizer {
 		list.add(d);
 		list.add(p);
 		
-		Log.d(TAG, "This layer is using Ada Delta optimization technique.");
+		Log.i(TAG, "This layer is using Ada Delta optimization technique.");
 		
 		return list;
 	}

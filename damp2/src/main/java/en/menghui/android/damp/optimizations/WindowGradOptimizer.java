@@ -37,7 +37,7 @@ public class WindowGradOptimizer extends Optimizer {
 		list.add(d);
 		list.add(p);
 		
-		Log.d(TAG, "This layer is using WindowGrad optimization technique.");
+		Log.i(TAG, "This layer is using WindowGrad optimization technique.");
 		
 		return list;
 	}

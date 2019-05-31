@@ -1,12 +1,14 @@
 package en.menghui.android.damp;
 
+import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
+import android.view.Menu;
+import android.view.MenuItem;
+
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.Callable;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.TimeUnit;
 
+import Jama.Matrix;
 import en.menghui.android.damp.layers.ConvolutionLayer;
 import en.menghui.android.damp.layers.FullyConnectedLayer;
 import en.menghui.android.damp.layers.Layer;
@@ -15,19 +17,12 @@ import en.menghui.android.damp.layers.RecurrentLayer;
 import en.menghui.android.damp.layers.SoftmaxLayer;
 import en.menghui.android.damp.networks.FeedForwardNetwork;
 import en.menghui.android.damp.recurrent.lstm.LSTMNetwork;
-import en.menghui.android.damp.recurrent.lstm.LSTMNode;
 import en.menghui.android.damp.recurrent.lstm.LSTMParam;
 import en.menghui.android.damp.recurrent.lstm.LSTMState;
 import en.menghui.android.damp.utils.MatrixUtils;
 import en.menghui.android.damp.utils.NeuralNetUtils;
-import Jama.Matrix;
-import android.app.Activity;
-import android.os.Bundle;
-import android.util.Log;
-import android.view.Menu;
-import android.view.MenuItem;
 
-public class MainActivity extends Activity {
+public class MainActivity extends AppCompatActivity {
 
 	private static final String TAG = "Main Activity";
 	

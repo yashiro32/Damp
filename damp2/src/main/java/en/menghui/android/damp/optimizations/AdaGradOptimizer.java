@@ -35,7 +35,7 @@ public class AdaGradOptimizer extends Optimizer {
 		list.add(d);
 		list.add(p);
 		
-		Log.d(TAG, "This layer is using AdaGrad optimization technique.");
+		Log.i(TAG, "This layer is using AdaGrad optimization technique.");
 		
 		return list;
 	}

@@ -47,7 +47,7 @@ public class AdamOptimizer extends Optimizer {
 		list.add(d);
 		list.add(p);
 		
-		Log.d(TAG, "This layer is using Adam optimization technique.");
+		Log.i(TAG, "This layer is using Adam optimization technique.");
 		
 		return list;
 	}
@@ -87,7 +87,7 @@ public class AdamOptimizer extends Optimizer {
 		list.add(v);
 		list.add(pag);
 		
-		Log.d(TAG, "This layer is using Adam optimization technique.");
+		Log.i(TAG, "This layer is using Adam optimization technique.");
 		
 		return list;
 	}
@@ -119,7 +119,7 @@ public class AdamOptimizer extends Optimizer {
 		list.add(v);
 		list.add(pag);
 		
-		Log.d(TAG, "This layer is using Adam optimization technique.");
+		Log.i(TAG, "This layer is using Adam optimization technique.");
 		
 		return list;
 	}

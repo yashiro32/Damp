@@ -39,7 +39,7 @@ public class TitanicDataSet {
 			
 			int c = 0;
 			for (int i = 0; i < values.length; i++) {
-				// Log.d(TAG, "i: " + i);
+				// Log.i(TAG, "i: " + i);
 				Arrays.sort(columnsToIgnore);
 				if (containsValue(columnsToIgnore, i)) {
 				    continue;

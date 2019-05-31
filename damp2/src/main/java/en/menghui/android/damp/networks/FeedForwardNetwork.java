@@ -64,7 +64,7 @@ public class FeedForwardNetwork extends Network {
 		for (int i = 0; i < epochs; i++) {
 			forwardProp();
 			
-			Log.d(TAG, "Accuracy: " + this.layers.get(this.layers.size()-1).evaluator.evaluate(this.layers.get(this.layers.size()-1).yOut, this.targets));
+			Log.i(TAG, "Accuracy: " + this.layers.get(this.layers.size()-1).evaluator.evaluate(this.layers.get(this.layers.size()-1).yOut, this.targets));
 			
 		    backProp();
 		}

@@ -1,5 +1,9 @@
 package en.menghui.android.damp.examples;
 
+import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
+
 import java.util.Arrays;
 
 import en.menghui.android.damp.R;
@@ -7,20 +11,13 @@ import en.menghui.android.damp.activations.ReluActivation;
 import en.menghui.android.damp.activations.SigmoidActivation;
 import en.menghui.android.damp.activations.TanhActivation;
 import en.menghui.android.damp.arrays.Tensor;
-import en.menghui.android.damp.layers.ConvLayer;
 import en.menghui.android.damp.layers.ConvolutionLayer2;
 import en.menghui.android.damp.layers.FullyConnectedLayer;
 import en.menghui.android.damp.layers.PoolingLayer2;
 import en.menghui.android.damp.layers.SoftmaxLayer;
-import en.menghui.android.damp.optimizations.AdamOptimizer;
 import en.menghui.android.damp.optimizations.SGDOptimizer;
-import en.menghui.android.damp.utils.NeuralNetUtils;
-import en.menghui.android.damp.utils.Volume;
-import android.app.Activity;
-import android.os.Bundle;
-import android.util.Log;
 
-public class ImageCNNExample extends Activity {
+public class ImageCNNExample extends AppCompatActivity {
 	private static final String TAG = "Image CNN Example";
 	
 	@Override
@@ -37,14 +34,14 @@ public class ImageCNNExample extends Activity {
 		Volume volume2 = new Volume(28, 28, 3);
 		list.add(volume2); 
 		
-		Log.d(TAG, "Training starts");
-		Log.d(TAG, "Input length: " + list.get(0).weights.length);
+		Log.i(TAG, "Training starts");
+		Log.i(TAG, "Input length: " + list.get(0).weights.length);
 		long timeStart = System.currentTimeMillis();
 		List<Volume> out = layer.forwardProp(list);
-		Log.d(TAG, "Output length: " + out.get(0).weights.length);
+		Log.i(TAG, "Output length: " + out.get(0).weights.length);
 		layer.backProp();
 		layer.optimize();
-		Log.d(TAG, "Training ends at " + (System.currentTimeMillis() - timeStart)); */
+		Log.i(TAG, "Training ends at " + (System.currentTimeMillis() - timeStart)); */
 		
 		// Tensor imgs = new Tensor(Arrays.asList(1, 1, 8, 8), true);
 		// Tensor filters = new Tensor(Arrays.asList(1, 1, 7, 7), true);
@@ -83,7 +80,7 @@ public class ImageCNNExample extends Activity {
 			fc1.forwardProp(pl1.output.tmat, pl1.output.tmat, miniBatchSize);
 			sf1.forwardProp(fc1.output, fc1.output, dataSet.labelsMatrix, miniBatchSize);
 			
-			Log.d(TAG, "Iteration: " + (i+1) + " Accuracy: " + sf1.evaluator.evaluate(sf1.yOut, dataSet.labelsMatrix));
+			Log.i(TAG, "Iteration: " + (i+1) + " Accuracy: " + sf1.evaluator.evaluate(sf1.yOut, dataSet.labelsMatrix));
 			
 			sf1.backProp(null);
 			sf1.optimize();
